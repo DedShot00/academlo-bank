@@ -3,6 +3,8 @@ const catchAsync = require('../utils/catchAsync');
 const bcrypt = require('bcryptjs');
 const generateJWT = require('../utils/jwt');
 const AppError = require('../utils/appError');
+const Transfer = require('../models/trasnfer.model');
+const { Op } = require("sequelize");
 
 //todo signup controller
 exports.signup = catchAsync(async (req, res, next) => {
@@ -63,3 +65,24 @@ exports.login = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.history = catchAsync(async (req, res, next) => { 
+  const {id} = req.params
+
+  const trasnferHistory = await Transfer.findAll({
+    where:{
+      [Op.or]: [{ senderUserId: id }, { receiverUserId: id }],
+    }
+  })
+
+  if (trasnferHistory.length < 1) {
+    return next(new AppError(`There isn't transactions associated to user with id: ${id}`,404))
+  }
+
+  return res.status(200).json({
+    status:"success",
+    message:'Transaccion history retrieved successfully',
+    history: trasnferHistory
+  })
+
+})

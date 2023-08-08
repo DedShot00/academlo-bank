@@ -3,11 +3,7 @@ const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
 exports.validUser = catchAsync(async (req, res, next) => {
-  let { accountNumber, receiverUserId, senderUserId } = req.body;
-
-  if (receiverUserId) {
-    accountNumber = receiverUserId
-  }
+  let { accountNumber } = req.body;
 
   const user = await User.findOne({
     where: {
@@ -15,6 +11,7 @@ exports.validUser = catchAsync(async (req, res, next) => {
       status: true,
     },
   });
+  
   if (!user) {
     return next(new AppError(`User: ${accountNumber} can't be found`, 404));
   }

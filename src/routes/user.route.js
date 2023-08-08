@@ -11,6 +11,7 @@ const router = express.Router();
 //* routes
 router.post('/signup', userController.signup)
 router.post('/login', userMiddleware.validUser, userController.login)
+router.get('/:id/history', userController.history)
 
 
 module.exports = router
